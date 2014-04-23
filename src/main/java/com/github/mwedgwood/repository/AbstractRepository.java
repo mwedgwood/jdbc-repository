@@ -50,19 +50,23 @@ public abstract class AbstractRepository<T extends Model> implements Repository<
 
     @Override
     public Collection<T> findByExample(T example) {
+        // TODO implement
         return null;
     }
 
     @Override
     public void save(T entity) {
+        // TODO implement
     }
 
     @Override
     public void delete(T entity) {
+        // TODO implement
     }
 
     @Override
     public void update(T entity) {
+        // TODO implement
     }
 
     @SuppressWarnings("unchecked")
