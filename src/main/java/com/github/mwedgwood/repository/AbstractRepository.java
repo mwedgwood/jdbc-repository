@@ -1,8 +1,6 @@
 package com.github.mwedgwood.repository;
 
-import com.github.mwedgwood.db.DBClient;
-import com.github.mwedgwood.db.MetaDataCache;
-import com.github.mwedgwood.db.StatementBuilder;
+import com.github.mwedgwood.db.*;
 import com.github.mwedgwood.db.sql.Constraints;
 import com.github.mwedgwood.db.sql.Sql;
 import com.github.mwedgwood.model.Model;
@@ -23,7 +21,13 @@ public abstract class AbstractRepository<T extends Model> implements Repository<
     protected AbstractRepository() {
         this.modelClass = inferModelClass();
         this.metaData = MetaDataCache.getInstance().getMetaDataForClass(modelClass);
-        this.dbClient = new DBClient<>(modelClass);
+        this.dbClient = new DBClient<>(new DefaultResultSetMapper<>(modelClass, metaData));
+    }
+
+    protected AbstractRepository(ResultSetMapper<T> resultSetMapper) {
+        this.modelClass = inferModelClass();
+        this.metaData = MetaDataCache.getInstance().getMetaDataForClass(modelClass);
+        this.dbClient = new DBClient<>(resultSetMapper);
     }
 
     @Override

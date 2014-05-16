@@ -1,26 +1,21 @@
 package com.github.mwedgwood.db;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DBClient<T> {
 
-    private final Class<T> modelClass;
-    private final MetaDataCache.MetaData metaData;
+    private final ResultSetMapper<T> resultSetMapper;
     private final DataSource dataSource;
 
-    // for unit tests
-    DBClient(Class<T> modelClass, MetaDataCache.MetaData metaData, DataSource dataSource) {
-        this.modelClass = modelClass;
-        this.metaData = metaData;
-        this.dataSource = dataSource;
-    }
-
-    public DBClient(Class<T> modelClass) {
-        this(modelClass, MetaDataCache.getInstance().getMetaDataForClass(modelClass), DataSourceFactory.getInstance().getDataSource());
+    public DBClient(ResultSetMapper<T> resultSetMapper) {
+        this.resultSetMapper = resultSetMapper;
+        this.dataSource = DataSourceFactory.getInstance().getDataSource();
     }
 
     public final T query(StatementBuilder statementBuilder) {
@@ -38,31 +33,13 @@ public class DBClient<T> {
 
             List<T> results = new ArrayList<>();
             while (resultSet.next()) {
-                results.add(map(resultSet));
+                results.add(resultSetMapper.map(resultSet));
             }
             return results;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
             close(preparedStatement, connection);
-        }
-    }
-
-    protected T map(ResultSet resultSet) throws SQLException {
-        try {
-            T model = modelClass.newInstance();
-
-            ResultSetMetaData rsMetaData = resultSet.getMetaData();
-            for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
-                String columnName = rsMetaData.getColumnName(i);
-                Method setter = metaData.setterForColumn(columnName);
-                Class<?> aClass = setter.getParameterTypes()[0];
-                setter.invoke(model, aClass.cast(resultSet.getObject(columnName)));
-            }
-
-            return model;
-        } catch (Exception e) {
-            throw new SQLException(e);
         }
     }
 
