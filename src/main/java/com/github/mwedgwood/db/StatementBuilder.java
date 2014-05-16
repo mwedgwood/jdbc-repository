@@ -5,5 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public interface StatementBuilder {
+
     PreparedStatement sql(Connection con) throws SQLException;
+
 }

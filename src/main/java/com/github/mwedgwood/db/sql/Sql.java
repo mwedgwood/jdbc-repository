@@ -16,6 +16,9 @@ public class Sql {
         private Set<String> columns = new HashSet<>();
         private Set<Constraints.Constraint> constraints = new HashSet<>();
 
+        private SqlBuilder() {
+        }
+
         public SqlBuilder select(String... columns) {
             this.columns.addAll(Arrays.asList(columns));
             return this;

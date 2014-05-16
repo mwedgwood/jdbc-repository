@@ -23,12 +23,12 @@ public class DBClient<T> {
         this(modelClass, MetaDataCache.getInstance().getMetaDataForClass(modelClass), DataSourceFactory.getInstance().getDataSource());
     }
 
-    public final T execute(StatementBuilder statementBuilder) {
-        List<T> results = executeList(statementBuilder);
+    public final T query(StatementBuilder statementBuilder) {
+        List<T> results = queryList(statementBuilder);
         return results.isEmpty() ? null : results.get(0);
     }
 
-    public final List<T> executeList(StatementBuilder statementBuilder) {
+    public final List<T> queryList(StatementBuilder statementBuilder) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -38,7 +38,7 @@ public class DBClient<T> {
 
             List<T> results = new ArrayList<>();
             while (resultSet.next()) {
-                results.add(buildModel(resultSet));
+                results.add(map(resultSet));
             }
             return results;
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class DBClient<T> {
         }
     }
 
-    protected T buildModel(ResultSet resultSet) throws SQLException {
+    protected T map(ResultSet resultSet) throws SQLException {
         try {
             T model = modelClass.newInstance();
 

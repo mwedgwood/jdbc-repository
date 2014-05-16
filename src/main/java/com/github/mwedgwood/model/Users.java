@@ -1,7 +1,5 @@
 package com.github.mwedgwood.model;
 
-import org.joda.time.LocalDateTime;
-
 import java.util.Date;
 
 public class Users implements Model {

@@ -14,8 +14,8 @@ public class DataSourceFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceFactory.class);
 
-    private final Map<String, DataSource> _dataSources;
-    private final PropertyReader _reader;
+    private final Map<String, DataSource> dataSources;
+    private final PropertyReader reader;
 
 
     private static class SingletonHolder {
@@ -23,8 +23,8 @@ public class DataSourceFactory {
     }
 
     private DataSourceFactory() {
-        _dataSources = new ConcurrentHashMap<>();
-        _reader = PropertyReader.getInstance();
+        dataSources = new ConcurrentHashMap<>();
+        reader = PropertyReader.getInstance();
     }
 
     public static DataSourceFactory getInstance() {
@@ -32,7 +32,7 @@ public class DataSourceFactory {
     }
 
     public DataSource getDataSource() {
-        return getDataSource(_reader.getProperty("db.host"), _reader.getProperty("db.dbName"), _reader.getProperty("db.user"), _reader.getProperty("db.password"));
+        return getDataSource(reader.getProperty("db.host"), reader.getProperty("db.dbName"), reader.getProperty("db.user"), reader.getProperty("db.password"));
     }
 
     public DataSource getDataSource(String jdbcHost, String dbName, String dbUser, String dbPassword) {
@@ -42,10 +42,10 @@ public class DataSourceFactory {
 
     DataSource getDataSource(String jdbcUrl, String dbUser, String dbPassword) {
         String dataSourceKey = createKey(jdbcUrl, dbUser);
-        if (_dataSources.get(dataSourceKey) == null) {
-            _dataSources.put(dataSourceKey, createDataSource(jdbcUrl, dbUser, dbPassword));
+        if (dataSources.get(dataSourceKey) == null) {
+            dataSources.put(dataSourceKey, createDataSource(jdbcUrl, dbUser, dbPassword));
         }
-        return _dataSources.get(dataSourceKey);
+        return dataSources.get(dataSourceKey);
     }
 
     String createKey(String jdbcUrl, String dbUser) {

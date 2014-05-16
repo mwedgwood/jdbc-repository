@@ -28,7 +28,7 @@ public abstract class AbstractRepository<T extends Model> implements Repository<
 
     @Override
     public T findById(final Integer id) {
-        return dbClient.execute(new StatementBuilder() {
+        return dbClient.query(new StatementBuilder() {
             @Override
             public PreparedStatement sql(Connection con) throws SQLException {
                 PreparedStatement preparedStatement = con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).where(Constraints.eq("id")).toSql());
@@ -40,7 +40,7 @@ public abstract class AbstractRepository<T extends Model> implements Repository<
 
     @Override
     public Collection<T> findAll() {
-        return dbClient.executeList(new StatementBuilder() {
+        return dbClient.queryList(new StatementBuilder() {
             @Override
             public PreparedStatement sql(Connection con) throws SQLException {
                 return con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).toSql());
