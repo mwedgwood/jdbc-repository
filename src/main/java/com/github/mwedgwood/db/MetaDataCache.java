@@ -44,7 +44,7 @@ public final class MetaDataCache {
         MetaData(Class<?> klass) {
             this.klass = klass;
             this.tableName = initTableName();
-            this.columnToSetter = initMethodMap(setters(), "set");
+            this.columnToSetter = initColumnToSetterMap();
         }
 
         public String getTableName() {
@@ -67,10 +67,10 @@ public final class MetaDataCache {
             return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, klass.getSimpleName());
         }
 
-        Map<String, Method> initMethodMap(Set<Method> methods, String methodPrefix) {
+        Map<String, Method> initColumnToSetterMap() {
             HashMap<String, Method> result = new HashMap<>();
-            for (Method setter : methods) {
-                result.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, setter.getName().replaceFirst(methodPrefix, "")), setter);
+            for (Method setter : setters()) {
+                result.put(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, setter.getName().replaceFirst("set", "")), setter);
             }
             return result;
         }
