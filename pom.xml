@@ -14,7 +14,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.compiler.version>1.7</java.compiler.version>
+        <java.compiler.version>1.8</java.compiler.version>
         <postgresql.version>9.2-1002-jdbc4</postgresql.version>
         <ehcache_version>2.7.0</ehcache_version>
     </properties>

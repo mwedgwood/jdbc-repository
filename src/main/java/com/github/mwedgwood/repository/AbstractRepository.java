@@ -1,15 +1,16 @@
 package com.github.mwedgwood.repository;
 
-import com.github.mwedgwood.db.*;
+import com.github.mwedgwood.db.DBClient;
+import com.github.mwedgwood.db.DefaultResultSetMapper;
+import com.github.mwedgwood.db.MetaDataCache;
+import com.github.mwedgwood.db.ResultSetMapper;
 import com.github.mwedgwood.db.sql.Constraints;
 import com.github.mwedgwood.db.sql.Sql;
 import com.github.mwedgwood.model.Model;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Collection;
 
 public abstract class AbstractRepository<T extends Model> implements Repository<T> {
@@ -32,24 +33,16 @@ public abstract class AbstractRepository<T extends Model> implements Repository<
 
     @Override
     public T findById(final Integer id) {
-        return dbClient.query(new StatementBuilder() {
-            @Override
-            public PreparedStatement sql(Connection con) throws SQLException {
-                PreparedStatement preparedStatement = con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).where(Constraints.eq("id")).toSql());
-                preparedStatement.setInt(1, id);
-                return preparedStatement;
-            }
+        return dbClient.query(con -> {
+            PreparedStatement preparedStatement = con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).where(Constraints.eq("id")).toSql());
+            preparedStatement.setInt(1, id);
+            return preparedStatement;
         });
     }
 
     @Override
     public Collection<T> findAll() {
-        return dbClient.queryList(new StatementBuilder() {
-            @Override
-            public PreparedStatement sql(Connection con) throws SQLException {
-                return con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).toSql());
-            }
-        });
+        return dbClient.queryList(con -> con.prepareStatement(Sql.select(metaData.getColumns()).from(metaData.getTableName()).toSql()));
     }
 
     @Override

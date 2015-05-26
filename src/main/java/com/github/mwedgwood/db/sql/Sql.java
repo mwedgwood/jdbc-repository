@@ -40,13 +40,7 @@ public class Sql {
         }
 
         public String toSql() {
-            return new StringBuilder().append("SELECT ")
-                    .append(Joiner.on(",").skipNulls().join(columns))
-                    .append(" FROM ")
-                    .append(tableName)
-                    .append(" WHERE ")
-                    .append(Joiner.on(",").skipNulls().join(constraints))
-                    .toString();
+            return "SELECT " + Joiner.on(",").skipNulls().join(columns) + " FROM " + tableName + " WHERE " + Joiner.on(",").skipNulls().join(constraints);
         }
 
     }
